@@ -4,7 +4,7 @@ import { tap, catchError } from 'rxjs/operators';
 
 import { Pizza } from '../../models/pizza.model';
 import { PizzasService } from '../../services';
-import { LoadPizzas } from './pizzas.actions';
+import { LoadPizzas, CreatePizza, UpdatePizza, DeletePizza } from './pizzas.actions';
 
 export interface PizzasStateModel {
   entities: { [id: number]: Pizza };
@@ -56,6 +56,54 @@ export class PizzasState {
       catchError(error => {
         patchState({ loading: false, loaded: false });
         return of(error);
+      })
+    );
+  }
+
+  @Action(CreatePizza)
+  createPizza(
+    { patchState, getState, setState }: StateContext<PizzasStateModel>,
+    action: CreatePizza
+  ) {
+    return this.pizzaService.createPizza(action.payload).pipe(
+      tap(pizza => {
+        const state = getState();
+        const entities = {
+          ...state.entities,
+          [pizza.id]: pizza
+        };
+        patchState({ entities });
+      })
+    );
+  }
+
+  @Action(UpdatePizza)
+  updatePizza(
+    { patchState, getState, setState }: StateContext<PizzasStateModel>,
+    action: UpdatePizza
+  ) {
+    return this.pizzaService.updatePizza(action.payload).pipe(
+      tap(pizza => {
+        const state = getState();
+        const entities = {
+          ...state.entities,
+          [pizza.id]: pizza
+        };
+        patchState({ entities });
+      })
+    );
+  }
+
+  @Action(DeletePizza)
+  deletePizza(
+    { patchState, getState, setState }: StateContext<PizzasStateModel>,
+    action: DeletePizza
+  ) {
+    return this.pizzaService.removePizza(action.payload).pipe(
+      tap(pizza => {
+        const state = getState();
+        const { [pizza.id]: removed, ...entities } = state.entities;
+        patchState({ entities });
       })
     );
   }
