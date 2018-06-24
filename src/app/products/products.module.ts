@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { NgxsModule } from '@ngxs/store';
 
 // components
 import * as fromComponents from './components';
@@ -12,6 +13,7 @@ import * as fromContainers from './containers';
 
 // services
 import * as fromServices from './services';
+import { PizzasState } from './store/pizzas/pizzas.state';
 
 // routes
 export const ROUTES: Routes = [
@@ -30,7 +32,13 @@ export const ROUTES: Routes = [
 ];
 
 @NgModule({
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule, RouterModule.forChild(ROUTES)],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    RouterModule.forChild(ROUTES),
+    NgxsModule.forFeature([PizzasState])
+  ],
   providers: [...fromServices.services],
   declarations: [...fromContainers.containers, ...fromComponents.components],
   exports: [...fromContainers.containers, ...fromComponents.components]

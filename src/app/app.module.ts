@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { NgxsModule } from '@ngxs/store';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 
 import { AppComponent } from './app.component';
 
@@ -15,7 +17,13 @@ export const ROUTES: Routes = [
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, BrowserAnimationsModule, RouterModule.forRoot(ROUTES)],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    RouterModule.forRoot(ROUTES),
+    NgxsModule.forRoot(),
+    NgxsReduxDevtoolsPluginModule.forRoot()
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })
