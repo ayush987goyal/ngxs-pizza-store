@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 import { Pizza } from '../models/pizza.model';
 
@@ -29,8 +29,9 @@ export class PizzasService {
   }
 
   removePizza(payload: Pizza): Observable<Pizza> {
-    return this.http
-      .delete<any>(`http://localhost:3000/pizzas/${payload.id}`)
-      .pipe(catchError((error: any) => Observable.throw(error.json())));
+    return this.http.delete<any>(`http://localhost:3000/pizzas/${payload.id}`).pipe(
+      map(() => payload),
+      catchError((error: any) => Observable.throw(error.json()))
+    );
   }
 }

@@ -1,10 +1,12 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
+import { Navigate } from '@ngxs/router-plugin';
 import { of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
 import { Pizza } from '../../models/pizza.model';
 import { PizzasService } from '../../services';
 import { LoadPizzas, CreatePizza, UpdatePizza, DeletePizza, SelectPizza } from './pizzas.actions';
+import { ToppingsState, ToppingsStateModel } from '../toppings/toppings.state';
 
 export interface PizzasStateModel {
   entities: { [id: number]: Pizza };
@@ -33,6 +35,12 @@ export class PizzasState {
   @Selector()
   static getSelectedPizza(state: PizzasStateModel) {
     return state.entities[state.selectedPizzaId];
+  }
+
+  @Selector([ToppingsState])
+  static getPizzaVisualized(state: PizzasStateModel, toppingsState: ToppingsStateModel) {
+    const toppings = toppingsState.selectedToppings.map(id => toppingsState.entities[id]);
+    return { ...state.entities[state.selectedPizzaId], toppings };
   }
 
   @Action(LoadPizzas)
@@ -73,7 +81,10 @@ export class PizzasState {
   }
 
   @Action(CreatePizza)
-  createPizza({ patchState, getState }: StateContext<PizzasStateModel>, action: CreatePizza) {
+  createPizza(
+    { patchState, getState, dispatch }: StateContext<PizzasStateModel>,
+    action: CreatePizza
+  ) {
     return this.pizzaService.createPizza(action.payload).pipe(
       tap(pizza => {
         const state = getState();
@@ -82,12 +93,16 @@ export class PizzasState {
           [pizza.id]: pizza
         };
         patchState({ entities });
+        dispatch(new Navigate(['/products', pizza.id]));
       })
     );
   }
 
   @Action(UpdatePizza)
-  updatePizza({ patchState, getState }: StateContext<PizzasStateModel>, action: UpdatePizza) {
+  updatePizza(
+    { patchState, getState, dispatch }: StateContext<PizzasStateModel>,
+    action: UpdatePizza
+  ) {
     return this.pizzaService.updatePizza(action.payload).pipe(
       tap(pizza => {
         const state = getState();
@@ -96,17 +111,22 @@ export class PizzasState {
           [pizza.id]: pizza
         };
         patchState({ entities });
+        dispatch(new Navigate(['/products']));
       })
     );
   }
 
   @Action(DeletePizza)
-  deletePizza({ patchState, getState }: StateContext<PizzasStateModel>, action: DeletePizza) {
+  deletePizza(
+    { patchState, getState, dispatch }: StateContext<PizzasStateModel>,
+    action: DeletePizza
+  ) {
     return this.pizzaService.removePizza(action.payload).pipe(
       tap(pizza => {
         const state = getState();
         const { [pizza.id]: removed, ...entities } = state.entities;
         patchState({ entities });
+        dispatch(new Navigate(['/products']));
       })
     );
   }

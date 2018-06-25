@@ -3,8 +3,9 @@ import { Store, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 
 import { Pizza } from '../../models/pizza.model';
-import { LoadPizzas } from '../../store/pizzas/pizzas.actions';
 import { PizzasState } from '../../store/pizzas/pizzas.state';
+import { LoadPizzas } from '../../store/pizzas/pizzas.actions';
+import { LoadToppings } from '../../store/toppings/toppings.actions';
 
 @Component({
   selector: 'app-products',
@@ -37,5 +38,6 @@ export class ProductsComponent implements OnInit {
 
   ngOnInit() {
     this.store.dispatch(new LoadPizzas());
+    this.store.dispatch(new LoadToppings());
   }
 }

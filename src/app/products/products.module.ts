@@ -13,7 +13,9 @@ import * as fromContainers from './containers';
 
 // services
 import * as fromServices from './services';
+
 import { PizzasState } from './store/pizzas/pizzas.state';
+import { ToppingsState } from './store/toppings/toppings.state';
 
 // routes
 export const ROUTES: Routes = [
@@ -37,7 +39,7 @@ export const ROUTES: Routes = [
     ReactiveFormsModule,
     HttpClientModule,
     RouterModule.forChild(ROUTES),
-    NgxsModule.forFeature([PizzasState])
+    NgxsModule.forFeature([PizzasState, ToppingsState])
   ],
   providers: [...fromServices.services],
   declarations: [...fromContainers.containers, ...fromComponents.components],
