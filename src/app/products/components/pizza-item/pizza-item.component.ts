@@ -1,4 +1,8 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Router } from '@angular/router';
+import { Store } from '@ngxs/store';
+
+import { SelectPizza } from '../../store/pizzas/pizzas.actions';
 
 @Component({
   selector: 'app-pizza-item',
@@ -6,7 +10,7 @@ import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from 
   styleUrls: ['pizza-item.component.scss'],
   template: `
     <div class="pizza-item">
-      <a [routerLink]="['/products', pizza.id]">
+      <a (click)="selectPizza()">
         <app-pizza-display
           [pizza]="pizza">
         </app-pizza-display>
@@ -20,4 +24,11 @@ import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from 
 })
 export class PizzaItemComponent {
   @Input() pizza: any;
+
+  constructor(private store: Store, private router: Router) {}
+
+  selectPizza() {
+    this.store.dispatch(new SelectPizza(this.pizza.id));
+    this.router.navigate(['/products', this.pizza.id]);
+  }
 }

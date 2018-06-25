@@ -1,8 +1,10 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Store } from '@ngxs/store';
 
 import { Pizza } from '../../models/pizza.model';
 import { PizzasService } from '../../services/pizzas.service';
+import { PizzasState } from '../../store/pizzas/pizzas.state';
 
 import { Topping } from '../../models/topping.model';
 import { ToppingsService } from '../../services/toppings.service';
@@ -36,7 +38,8 @@ export class ProductItemComponent implements OnInit {
     private pizzaService: PizzasService,
     private toppingsService: ToppingsService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private strore: Store
   ) {}
 
   ngOnInit() {
@@ -54,6 +57,7 @@ export class ProductItemComponent implements OnInit {
         this.onSelect(toppings.map(topping => topping.id));
       });
     });
+    this.strore.select(PizzasState.getSelectedPizza).subscribe();
   }
 
   onSelect(event: number[]) {

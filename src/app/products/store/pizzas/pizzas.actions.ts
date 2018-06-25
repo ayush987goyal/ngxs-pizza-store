@@ -4,17 +4,22 @@ export class LoadPizzas {
   static readonly type = '[Products] Load Pizzas';
 }
 
+export class SelectPizza {
+  static readonly type = '[Products] Select Pizza';
+  constructor(public payload: number) {}
+}
+
 export class CreatePizza {
-  readonly type = '[Products] Create Pizza';
+  static readonly type = '[Products] Create Pizza';
   constructor(public payload: Pizza) {}
 }
 
 export class UpdatePizza {
-  readonly type = '[Products] Update Pizza';
+  static readonly type = '[Products] Update Pizza';
   constructor(public payload: Pizza) {}
 }
 
 export class DeletePizza {
-  readonly type = '[Products] Delete Pizza';
+  static readonly type = '[Products] Delete Pizza';
   constructor(public payload: Pizza) {}
 }

@@ -4,12 +4,13 @@ import { tap, catchError } from 'rxjs/operators';
 
 import { Pizza } from '../../models/pizza.model';
 import { PizzasService } from '../../services';
-import { LoadPizzas, CreatePizza, UpdatePizza, DeletePizza } from './pizzas.actions';
+import { LoadPizzas, CreatePizza, UpdatePizza, DeletePizza, SelectPizza } from './pizzas.actions';
 
 export interface PizzasStateModel {
   entities: { [id: number]: Pizza };
   loaded: boolean;
   loading: boolean;
+  selectedPizzaId: number;
 }
 
 @State<PizzasStateModel>({
@@ -17,7 +18,8 @@ export interface PizzasStateModel {
   defaults: {
     entities: {},
     loaded: false,
-    loading: false
+    loading: false,
+    selectedPizzaId: null
   }
 })
 export class PizzasState {
@@ -26,6 +28,11 @@ export class PizzasState {
   @Selector()
   static getAllPizzas(state: PizzasStateModel) {
     return Object.keys(state.entities).map(id => state.entities[+id]);
+  }
+
+  @Selector()
+  static getSelectedPizza(state: PizzasStateModel) {
+    return state.entities[state.selectedPizzaId];
   }
 
   @Action(LoadPizzas)
@@ -60,11 +67,13 @@ export class PizzasState {
     );
   }
 
+  @Action(SelectPizza)
+  selectPizza({ patchState }: StateContext<PizzasStateModel>, action: SelectPizza) {
+    patchState({ selectedPizzaId: action.payload });
+  }
+
   @Action(CreatePizza)
-  createPizza(
-    { patchState, getState, setState }: StateContext<PizzasStateModel>,
-    action: CreatePizza
-  ) {
+  createPizza({ patchState, getState }: StateContext<PizzasStateModel>, action: CreatePizza) {
     return this.pizzaService.createPizza(action.payload).pipe(
       tap(pizza => {
         const state = getState();
@@ -78,10 +87,7 @@ export class PizzasState {
   }
 
   @Action(UpdatePizza)
-  updatePizza(
-    { patchState, getState, setState }: StateContext<PizzasStateModel>,
-    action: UpdatePizza
-  ) {
+  updatePizza({ patchState, getState }: StateContext<PizzasStateModel>, action: UpdatePizza) {
     return this.pizzaService.updatePizza(action.payload).pipe(
       tap(pizza => {
         const state = getState();
@@ -95,10 +101,7 @@ export class PizzasState {
   }
 
   @Action(DeletePizza)
-  deletePizza(
-    { patchState, getState, setState }: StateContext<PizzasStateModel>,
-    action: DeletePizza
-  ) {
+  deletePizza({ patchState, getState }: StateContext<PizzasStateModel>, action: DeletePizza) {
     return this.pizzaService.removePizza(action.payload).pipe(
       tap(pizza => {
         const state = getState();
